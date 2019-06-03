@@ -1,0 +1,68 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "prefix": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "functionsServicePlanName": "[concat(parameters('prefix'),'devplan')]",
+    "functionsAppServiceName": "[concat(parameters('prefix'),'devfn')]",
+    "storageName": "[concat(parameters('prefix'),'devstorage')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "name": "[variables('functionsAppServiceName')]",
+      "apiVersion": "2016-08-01",
+      "location": "West Europe",
+      "scale": null,
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(variables('functionsAppServiceName'),'.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(variables('functionsAppServiceName'),'.scm.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms',variables('functionsServicePlanName'))]",
+        "reserved": false,
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "slotSetting": false,
+              "value": "~2"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('storageName')),providers('Microsoft.Storage','storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms',variables('functionsServicePlanName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

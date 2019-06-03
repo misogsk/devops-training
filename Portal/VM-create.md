@@ -5,7 +5,7 @@ Create Virtual Machine via Azure Portal
 1. Create resource group named **rg$yourSurnameName$ops**
 1. Click on **Add** button
 1. _Click_ on Windows Server in **Compute** section
-![image.png](/.attachments/image-bbb12e51-53d8-4df1-be74-fe165f4c5247.png)
+![image.png](https://github.com/misogsk/devops-training/tree/master/Portal/.attachments/image-bbb12e51-53d8-4df1-be74-fe165f4c5247.png)
 
 1. Choose **Windows Seerver 2019 Datacenter**
 ![image.png](/.attachments/image-5512fc71-b5dd-4a10-8866-c6956134660e.png)

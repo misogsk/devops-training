@@ -4,12 +4,24 @@
   "parameters": {
     "prefix": {
       "type": "string"
+    },
+    "storageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
     }
   },
   "variables": {
     "functionsServicePlanName": "[concat(parameters('prefix'),'devplan')]",
     "functionsAppServiceName": "[concat(parameters('prefix'),'devfn')]",
-    "storageName": "[concat(parameters('prefix'),'devstorage')]"
+    "storageName": "[concat(parameters('prefix'),'devstorage')]",
+    "devopstrainName": "[concat('devopstrain', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
@@ -62,6 +74,20 @@
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms',variables('functionsServicePlanName'))]"
       ]
+    },
+    {
+      "name": "[variables('storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('storageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "[variables('storageName')]"
+      },
+      "kind": "Storage"
     }
   ],
   "outputs": {}

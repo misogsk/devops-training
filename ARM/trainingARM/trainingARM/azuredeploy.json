@@ -126,6 +126,20 @@
       ]
     },
     {
+      "name": "[variables('storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('storageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "[variables('storageName')]"
+      },
+      "kind": "Storage"
+    },
+    {
       "name": "[concat(variables('storageName'),copyIndex())]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
@@ -149,7 +163,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "tags": {
         "displayName": "migrVnet"
       },

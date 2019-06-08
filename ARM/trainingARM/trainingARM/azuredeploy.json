@@ -51,7 +51,7 @@
     "trainingVMImageOffer": "WindowsServer",
     "trainingVMOSDiskName": "trainingVMOSDisk",
     "trainingVMVmSize": "Standard_B1s",
-    "trainingVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'migrVnet')]",
+    "trainingVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'trainVnet')]",
     "trainingVMSubnetRef": "[concat(variables('trainingVMVnetID'), '/subnets/', variables('migrVnetSubnet1Name'))]",
     "trainingVMStorageAccountContainerName": "vhds",
     "trainingVMNicName": "[concat(parameters('vmName'), 'NetworkInterface')]"
@@ -137,7 +137,12 @@
       "tags": {
         "displayName": "[variables('storageName')]"
       },
-      "kind": "Storage"
+      "kind": "Storage",
+      "copy": {
+        "name": "storagecopy",
+        "count": 3,
+        "mode": "parallel"
+      }
     },
     {
       "name": "migrVnet",

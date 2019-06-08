@@ -126,7 +126,7 @@
       ]
     },
     {
-      "name": "[variables('storageName')]",
+      "name": "[concat(variables('storageName'),copyIndex())]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-01-01",

@@ -10,6 +10,9 @@
     },
     "vmAdminName": {
       "value": "misogsk"
+    },
+    "trainingPipDnsName": {
+      "value": "testDNS"
     }
   }
 }

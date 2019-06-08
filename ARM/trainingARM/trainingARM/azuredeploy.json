@@ -35,6 +35,10 @@
         "2019-Datacenter",
         "2016-Datacenter"
       ]
+    },
+    "trainingPipDnsName": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "variables": {
@@ -42,6 +46,7 @@
     "functionsAppServiceName": "[concat(parameters('prefix'),'devfn')]",
     "storageName": "[concat(parameters('prefix'),'devstorage')]",
     "devopstrainName": "[concat('devopstrain', uniqueString(resourceGroup().id))]",
+    "vnetName": "[concat(parameters('prefix'), 'trainVnet')]",
     "migrVnetPrefix": "10.0.0.0/16",
     "migrVnetSubnet1Name": "Subnet-1",
     "migrVnetSubnet1Prefix": "10.0.0.0/24",
@@ -51,10 +56,11 @@
     "trainingVMImageOffer": "WindowsServer",
     "trainingVMOSDiskName": "trainingVMOSDisk",
     "trainingVMVmSize": "Standard_B1s",
-    "trainingVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'trainVnet')]",
+    "trainingVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
     "trainingVMSubnetRef": "[concat(variables('trainingVMVnetID'), '/subnets/', variables('migrVnetSubnet1Name'))]",
     "trainingVMStorageAccountContainerName": "vhds",
-    "trainingVMNicName": "[concat(parameters('vmName'), 'NetworkInterface')]"
+    "trainingVMNicName": "[concat(parameters('vmName'), 'NetworkInterface')]",
+    "trainingPipName": "trainingPip"
   },
   "resources": [
     {
@@ -155,11 +161,11 @@
       "copy": {
         "name": "storagecopy",
         "count": 3,
-        "mode": "parallel"
+        "mode": "Parallel"
       }
     },
     {
-      "name": "migrVnet",
+      "name": "[variables('vnetName')]",
       "type": "Microsoft.Network/virtualNetworks",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
@@ -195,7 +201,8 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', 'migrVnet')]"
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('trainingPipName'))]"
       ],
       "tags": {
         "displayName": "trainingVMNic"
@@ -208,6 +215,9 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('trainingVMSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('trainingPipName'))]"
               }
             }
           }
@@ -258,6 +268,23 @@
             }
           ]
         }
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2019-02-01",
+      "name": "[variables('trainingPipName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Basic",
+        "tier": "Regional"
+      },
+      "properties": {
+        "provisioningState": "Succeeded",
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": []
       }
     }
   ],

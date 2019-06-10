@@ -35,10 +35,6 @@
         "2019-Datacenter",
         "2016-Datacenter"
       ]
-    },
-    "trainingPipDnsName": {
-      "type": "string",
-      "minLength": 1
     }
   },
   "variables": {
@@ -118,11 +114,15 @@
             },
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
-              "value": "dotnet"
+              "value": "node"
             },
             {
               "name": "AzureWebJobsStorage",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('storageName')),providers('Microsoft.Storage','storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "10.14.1"
             }
           ]
         }

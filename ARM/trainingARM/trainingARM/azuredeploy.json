@@ -147,7 +147,7 @@
         "Application_Type": "web",
         "Request_Source": "IbizaWebAppExtensionCreate"
       }
-    }
+    },
     {
       "name": "[variables('storageName')]",
       "type": "Microsoft.Storage/storageAccounts",

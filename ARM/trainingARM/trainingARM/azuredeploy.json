@@ -56,7 +56,8 @@
     "trainingVMSubnetRef": "[concat(variables('trainingVMVnetID'), '/subnets/', variables('migrVnetSubnet1Name'))]",
     "trainingVMStorageAccountContainerName": "vhds",
     "trainingVMNicName": "[concat(parameters('vmName'), 'NetworkInterface')]",
-    "trainingPipName": "trainingPip"
+    "trainingPipName": "trainingPip",
+    "appInsightsName": "[concat(parameters('prefix'),'functionai')]"
   },
   "resources": [
     {
@@ -123,14 +124,30 @@
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
               "value": "10.14.1"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('Microsoft.Insights/components',variables('appInsightsName')),'2015-05-01').InstrumentationKey]"
             }
           ]
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms',variables('functionsServicePlanName'))]"
+        "[resourceId('Microsoft.Web/serverfarms',variables('functionsServicePlanName'))]",
+        "[resourceId('Microsoft.insights/components',concat(parameters('prefix'),'functionai')]"
       ]
     },
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2015-05-01",
+      "name": "[variables('appInsightsName')]",
+      "location": "westeurope",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "Request_Source": "IbizaWebAppExtensionCreate"
+      }
+    }
     {
       "name": "[variables('storageName')]",
       "type": "Microsoft.Storage/storageAccounts",

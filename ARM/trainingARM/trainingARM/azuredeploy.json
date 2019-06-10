@@ -134,7 +134,7 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms',variables('functionsServicePlanName'))]",
-        "[resourceId('Microsoft.insights/components',concat(parameters('prefix'),'functionai')]"
+        "[resourceId('Microsoft.insights/components',variables('appInsightsName'))]"
       ]
     },
     {
